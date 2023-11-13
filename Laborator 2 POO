@@ -1,0 +1,557 @@
+Problema 1
+
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+class Document {
+private:
+    string denumire;
+    string tema;
+    string autor;
+    int numarPagini;
+    string dataUltimeiRedactari;
+
+public:
+    // Constructor implicit
+    Document() {
+        denumire = "";
+        tema = "";
+        autor = "";
+        numarPagini = 0;
+        dataUltimeiRedactari = "";
+    }
+
+    // Constructor cu parametri
+    Document(string nume, string t, string a, int nrPagini, string dataRedactarii) {
+        denumire = nume;
+        tema = t;
+        autor = a;
+        numarPagini = nrPagini;
+        dataUltimeiRedactari = dataRedactarii;
+    }
+
+    // Destructor
+    ~Document() {
+        cout << "Documentul '" << denumire << "' a fost distrus." << endl;
+    }
+
+    // Funcție pentru modificarea temei
+    void setTema(string t) {
+        tema = t;
+    }
+
+    // Funcție pentru modificarea datei ultimei redactări
+    void setDataUltimeiRedactari(string data) {
+        dataUltimeiRedactari = data;
+    }
+
+    // Funcție pentru afișarea informațiilor despre document
+    void afisareDocument() {
+        cout << "Denumire: " << denumire << endl;
+        cout << "Tema: " << tema << endl;
+        cout << "Autor: " << autor << endl;
+        cout << "Număr de pagini: " << numarPagini << endl;
+        cout << "Data ultimei redactări: " << dataUltimeiRedactari << endl;
+    }
+};
+
+int main() {
+    int optiune;
+    Document* document = nullptr; // Declaram un pointer la obiect Document
+
+    while (true) {
+        cout << "\nMeniu:\n";
+        cout << "1. Creare document\n";
+        cout << "2. Modifică tema documentului\n";
+        cout << "3. Modifică data ultimei redactări\n";
+        cout << "4. Afișează informații despre document\n";
+        cout << "5. Ieșire\n";
+        cout << "Alege o opțiune: ";
+        cin >> optiune;
+
+        switch (optiune) {
+            case 1:
+                {
+                    string nume, tema, autor, data;
+                    int pagini;
+
+                    cout << "Introduceti denumirea documentului: ";
+                    cin.ignore();
+                    getline(cin, nume);
+
+                    cout << "Introduceti tema documentului: ";
+                    getline(cin, tema);
+
+                    cout << "Introduceti autorul documentului: ";
+                    getline(cin, autor);
+
+                    cout << "Introduceti numarul de pagini: ";
+                    cin >> pagini;
+
+                    cout << "Introduceti data ultimei redactari: ";
+                    cin.ignore();
+                    getline(cin, data);
+
+                    document = new Document(nume, tema, autor, pagini, data);
+                    cout << "Documentul a fost creat." << endl;
+                }
+                break;
+
+            case 2:
+                if (document != nullptr) {
+                    string newTema;
+                    cout << "Introduceti noua tema: ";
+                    cin.ignore(); // Ignorăm newline din buffer
+                    getline(cin, newTema);
+                    document->setTema(newTema);
+                    cout << "Tema documentului a fost modificata." << endl;
+                } else {
+                    cout << "Nu exista un document creat." << endl;
+                }
+                break;
+
+            case 3:
+                if (document != nullptr) {
+                    string newData;
+                    cout << "Introduceti noua data de redactare: ";
+                    cin.ignore(); // Ignorăm newline din buffer
+                    getline(cin, newData);
+                    document->setDataUltimeiRedactari(newData);
+                    cout << "Data ultimei redactari a fost modificata." << endl;
+                } else {
+                    cout << "Nu exista un document creat." << endl;
+                }
+                break;
+
+            case 4:
+                if (document != nullptr) {
+                    document->afisareDocument();
+                } else {
+                    cout << "Nu exista un document creat." << endl;
+                }
+                break;
+
+            case 5:
+                if (document != nullptr) {
+                    delete document;
+                }
+                cout << "La revedere!" << endl;
+                return 0;
+
+            default:
+                cout << "Opțiune invalidă. Încercați din nou." << endl;
+        }
+    }
+
+    return 0;
+}
+
+
+Problema 2
+
+#include <iostream>
+
+using namespace std;
+ // Crearea unei clase Matrix, care va crea tablouri 2 dimensionale
+class Matrix {
+private:
+    // Variabilele principale
+    int **ptrElem; // Stocarea elementelor de tip double
+    int col,row; // Numarul de rinduri si coloane
+    int errorCode; // Codul de eroare
+
+    // Functia de inserarea a elementelor de la tastiera in tabloul 2 dimensional
+    void insertValue(int **ptrElem, int row, int col) {
+
+        // Verificam daca tabloul cu elemente de tip double este alocat
+        if(!ptrElem) {
+            exit(1);
+        }
+
+        // Inseram datele in tablou
+        cout << "\n\nInsert data into matrix\n\n";
+        for(int i = 0 ; i < this->row; i++) {
+            for(int j = 0 ; j < this->col; j++) {
+                cout << "Matrix[" << i << "][" << j << "] : ";
+                cin >> ptrElem[i][j];
+                cout << endl;
+            }
+        }
+
+    }
+
+public:
+
+    // Constructorul implicit
+    Matrix(){
+        ptrElem = NULL;
+        col = row = 0;
+    };
+
+    // Constructorul pentru matrice patratica
+    Matrix(int pr) {
+        // Alocam memorie pentru tot tabloul 2 dimensional
+        ptrElem = new int*[pr];
+        if(!ptrElem) {
+            this->errorCode = 1;
+            cout << "Coudn't allocate memory. Error code :" << this->errorCode << endl;
+            exit(1);
+        }
+        this->col = this->row = pr;
+        for(int i = 0 ; i < pr; i++) {
+            ptrElem[i] = new int[pr]; // alocam memorie pentru elementele tabloului
+            for(int j = 0; j < pr; j++) {
+                ptrElem[i][j] = 0; // setam elementele tabloului cu zero
+            }
+        }
+    };
+
+    // Constructorul pentru matrice dreptunghiulara
+    Matrix(int row, int col){
+
+        // Alocam memorie pentru tabloul 2 dimensional
+        ptrElem = new int*[row];
+
+        // Verificam daca a avut loc alocare de memorie, in caz contrar apare eroare cu codul 1
+        if(!ptrElem) {
+            this->errorCode = 1;
+            cout << "Coudn't allocate memory. Error code :" << this->errorCode << endl;
+            exit(1);
+        }
+
+        //setam numarul de coloane si rinduri
+
+        this->row = row;
+        this->col = col;
+
+        // Setam datele din tablou ca fiind egale cu zero
+        for(int i = 0; i < row; i++) {
+            ptrElem[i] = new int[col];
+            for(int j = 0 ; j < col ; j++) {
+                ptrElem[i][j] = 0;
+            }
+        }
+    }
+    // Returnam elementul de pe pozitia corespunzatoare
+    double returnElement(int row,int col){
+        return ptrElem[row][col];
+    }
+
+    // Schimba valoarea de pe o pozitie corespunzatoare
+    void changeValue(int row, int col, double newValue) {
+        ptrElem[row][col] = newValue;
+    }
+
+    // Initializarea functiei de inserare a datelor in tablou
+    void elemInit() {
+        insertValue(ptrElem,this->row,this->col);
+    }
+
+    // Afisarea la ecran a datelor
+    void showData() {
+        for(int i = 0;i < this->row; i++)
+        {
+            for(int j = 0; j < this->col; j++)
+            {
+                cout << ptrElem[i][j] << " ";
+            }
+            cout << endl;
+        }
+        cout << "\n";
+    }
+
+    // Destructorul de eliberare a memoriei alocate dinamic
+    ~Matrix() {
+        for (int i = 0; i < row; i++) {
+            delete[] ptrElem[i];
+        }
+            delete[] ptrElem;
+    }
+};
+
+// Functia de multiplicare a 2 matrice
+void multTwoMatrices(){
+
+    // Declaram variabilele ce vor stoca numarul de rinduri si coloane pentru cele 2 tablouri
+    int fRow,fCol;
+    int sRow,sCol;
+
+    // Inserarm numarul de coloane si rinduri
+    cout << "Insert the number of rows for first matrix: ";
+    cin >> fRow;
+    cout << endl;
+
+    cout <<"Insert the number of collumns for first matrix: ";
+    cin >> fCol;
+    cout << endl;
+
+
+    cout <<"Insert the number of rows for second matrix: ";
+    cin >> sRow;
+    cout << endl;
+
+    cout << "Insert the number of collumns for second matrix: ";
+    cin >> sCol;
+    cout << endl;
+
+    // Conditia de verificare pentru inmultire
+    if(fRow != sCol) {
+        cout << "Can't multiply these matrices";
+        exit(1);
+    };
+
+    // Crearea matricelor
+    Matrix firstMatrix(fRow,fCol);
+    Matrix secondMatrix(sRow,sCol);
+
+    // Inserarea elemnetelor in tablouri
+    firstMatrix.elemInit();
+    secondMatrix.elemInit();
+
+    // Afisarea datelor din matrici
+    cout << "First matrix" << endl;
+    firstMatrix.showData();
+
+
+    cout << "Second matrix" << endl;
+    secondMatrix.showData();
+
+    // Declararea matricei ce va stoca rezultatul operatiilor efectuate
+    Matrix result(fRow,sCol);
+
+    // Inmultim matricele
+    for(int i = 0; i < fRow; i++){
+        for(int j = 0; j < sCol; j++){
+            double sum = 0;
+            for(int k=0; k < sRow; k++){
+                sum += (firstMatrix.returnElement(i,k) * secondMatrix.returnElement(k,j));
+            }
+            result.changeValue(i,j,sum);
+        }
+    }
+
+    // Afisam rezultatul obtinut
+    cout << "Result of multiplying" << endl;
+    result.showData();
+}
+
+
+// Functia de multiplicare a matricei cu un numar
+void multWithANumber(){
+
+    // Initializam variabelele ce vor stoca numarul de rinduri si coloane din matrice
+    int row,col;
+
+    // Citim numarul de coloane si rinduri
+    cout << "Insert the number of rows for matrix: ";
+    cin >> row;
+    cout << endl;
+
+    cout <<"Insert the number of collumns for matrix: ";
+    cin >> col;
+    cout << endl;
+
+    // Initializam si citim numarul cu care se va amplifica matricea
+    int number;
+    cout << "Insert the number you want to multiply with : ";
+    cin >> number;
+    cout << endl;
+    // Initializam matricea
+    Matrix matrix(row,col);
+
+    // Inseram datele in matrice
+    matrix.elemInit();
+
+    // Afisam datele din matrice
+    cout << "Matrix" << endl;
+    matrix.showData();
+
+    // Initializam matricea de stocare a rezultatului operatiilor efectuate
+    Matrix result(row,col);
+
+    // Operatia de inmultire a matricei cu un numar
+    for(int i = 0; i < row; i++){
+        double sum = 0;
+        for(int j = 0; j < col; j++){
+            sum = (matrix.returnElement(i,j) * number);
+            result.changeValue(i,j,sum);
+        }
+    }
+
+    // Afisarea rezultatului
+    cout << "Result of multiplying" << endl;
+    result.showData();
+}
+
+// Adunarea a 2 matrice
+void addTwoMatrices() {
+
+    // Initializam variabilele ce vor stoca numarul de rinduri si coloane din matrici
+    int fRow, fCol;
+    int sRow, sCol;
+
+
+    // Citim numarul de coloane si rinduri
+    cout << "Insert the number of rows for first matrix: ";
+    cin >> fRow;
+    cout << endl;
+
+    cout << "Insert the number of collumns for first matrix: ";
+    cin >> fCol;
+    cout << endl;
+
+
+    cout << "Insert the number of rows for second matrix: ";
+    cin >> sRow;
+    cout << endl;
+
+    cout << "Insert the number of collumns for second matrix: ";
+    cin >> sCol;
+    cout << endl;
+
+    // Conditia de verificare pentru operatia de adunare
+    if ((fRow != sRow) && (fCol != sCol)) {
+        cout << "Can't add these matrices";
+        exit(1);
+    };
+
+    // Initializam matricele
+    Matrix firstMatrix(fRow, fCol);
+    Matrix secondMatrix(sRow, sCol);
+
+    // Inseram datele in matrice
+    firstMatrix.elemInit();
+    secondMatrix.elemInit();
+
+    // Afisam datele din matrice
+    cout << "First matrix" << endl;
+    firstMatrix.showData();
+
+
+    cout << "Second matrix" << endl;
+    secondMatrix.showData();
+
+    // Initializam matricea ce va stoca rezultatul final
+    Matrix result(fRow, sCol);
+
+    // Operatia de adunare a doua matrici
+    for (int i = 0; i < fRow; i++) {
+        double sum = 0;
+        for (int j = 0; j < sCol; j++) {
+            sum = (firstMatrix.returnElement(i, j) + secondMatrix.returnElement(i, j));
+            result.changeValue(i, j, sum);
+        }
+    }
+    // Afisarea la ecran a rezultatelor obtinute
+
+    cout << "Result of addition" << endl;
+    result.showData();
+}
+
+// Diferenta a 2 matrici
+void substTwoMatrices() {
+
+    // Initializam variabilele ce vor stoca numarul de rinduri si coloane din matrici
+    int fRow,fCol;
+    int sRow,sCol;
+
+    // Citim numarul de coloane si rinduri din matrici
+    cout << "Insert the number of rows for first matrix: ";
+    cin >> fRow;
+    cout << endl;
+
+    cout <<"Insert the number of collumns for first matrix: ";
+    cin >> fCol;
+    cout << endl;
+
+
+    cout <<"Insert the number of rows for second matrix: ";
+    cin >> sRow;
+    cout << endl;
+
+    cout << "Insert the number of collumns for second matrix: ";
+    cin >> sCol;
+    cout << endl;
+
+    // Conditia de verificare pentru scadere
+    if((fRow != sRow) && (fCol != sCol)) {
+        cout << "Can't add these matrices";
+        exit(1);
+    };
+
+    // Initializam matricele
+    Matrix firstMatrix(fRow,fCol);
+    Matrix secondMatrix(sRow,sCol);
+
+    // Inseram datele in matrici
+    firstMatrix.elemInit();
+    secondMatrix.elemInit();
+
+    // Afisam datele din matrici
+    cout << "First matrix" << endl;
+    firstMatrix.showData();
+
+
+    cout << "Second matrix" << endl;
+    secondMatrix.showData();
+
+    //Initializam matricea ce va stoca rezultatul operatiunilor efectuate
+    Matrix result(fRow,sCol);
+
+    // Diferenta a 2 matrici
+    for(int i = 0; i < fRow; i++){
+        double sum = 0;
+        for(int j = 0; j < sCol; j++){
+            sum = (firstMatrix.returnElement(i,j) - secondMatrix.returnElement(i,j));
+            result.changeValue(i,j,sum);
+        }
+    }
+
+    cout << "Result of substraction" << endl;
+    result.showData();
+}
+
+void menu() {
+    while(1) {
+        int v;
+        cout << "1 - Multiply 2 matrices.\n2 - Multiply a matrix with a number\n"
+                "3 - Sum 2 matrices\n4 - Substract 2 matrices\n" << endl;
+        cin >> v;
+        switch(v) {
+
+            case 1: {
+                multTwoMatrices(); // Inmultirea a 2 matrici
+                break;
+            };
+
+            case 2 : {
+                multWithANumber(); // Inmultirea a unei matrici cu un numar
+                break;
+            };
+
+            case 3 : {
+                addTwoMatrices(); // Adunararea a 2 matrici
+                break;
+            };
+
+            case 4: {
+                substTwoMatrices(); // Diferenta a 2 matrici
+                break;
+            };
+        }
+
+        int x;
+        cout << "\nDo you want to continue? (1 - Yes | Other button - No)" << endl;
+        cin >> x;
+        if(x != 1) {break;};
+    }
+}
+
+
+int main(void){
+
+    menu();
+    return 0;
+}
