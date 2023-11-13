@@ -1,0 +1,291 @@
+Problema 1:
+
+#include <iostream>
+
+class RealNumber {
+private:
+    double value;
+
+public:
+    RealNumber(double val) : value(val) {}
+
+    // Supraincarcarea operatorului ++ (prefix) pentru clasa RealNumber
+    RealNumber& operator++() {
+        value++;
+        return *this;
+    }
+
+    // Supraincarcarea operatorului ++ (postfix) pentru clasa RealNumber
+    RealNumber operator++(int) {
+        RealNumber temp = *this;
+        value++;
+        return temp;
+    }
+
+    // Supraincarcarea operatorului + pentru clasa RealNumber
+    RealNumber operator+(const RealNumber& other) const {
+        return RealNumber(value + other.value);
+    }
+
+    // Funcție friend pentru operatorul - (scădere dintre un RealNumber și un double)
+    friend RealNumber operator-(const RealNumber& lhs, double rhs);
+
+    // Funcție friend pentru operatorul - (scădere dintre un double și un RealNumber)
+    friend RealNumber operator-(double lhs, const RealNumber& rhs);
+
+    // Funcție friend pentru operatorul -- (prefix)
+    friend RealNumber operator--(RealNumber& num);
+
+    // Funcție friend pentru operatorul -- (postfix)
+    friend RealNumber operator--(RealNumber& num, int);
+
+    // Funcție friend pentru operatorul + între double și RealNumber
+    friend RealNumber operator+(double lhs, const RealNumber& rhs);
+
+    // Funcție pentru a obține valoarea membrului privat 'value'
+    double getValue() const {
+        return value;
+    }
+};
+
+// Supraincarcarea operatorului - (scăderea dintre un RealNumber și un double)
+RealNumber operator-(const RealNumber& lhs, double rhs) {
+    return RealNumber(lhs.value - rhs);
+}
+
+// Supraincarcarea operatorului - (scăderea dintre un double și un RealNumber)
+RealNumber operator-(double lhs, const RealNumber& rhs) {
+    return RealNumber(lhs - rhs.value);
+}
+
+// Supraincarcarea operatorului -- (prefix)
+RealNumber operator--(RealNumber& num) {
+    num.value--;
+    return num;
+}
+
+// Supraincarcarea operatorului -- (postfix)
+RealNumber operator--(RealNumber& num, int) {
+    RealNumber temp = num;
+    num.value--;
+    return temp;
+}
+
+// Supraincarcarea operatorului + între double și RealNumber
+RealNumber operator+(double lhs, const RealNumber& rhs) {
+    return RealNumber(lhs + rhs.value);
+}
+
+int main() {
+    RealNumber num1(5.0);
+    RealNumber num2(2.0);
+
+    // Utilizarea operatorului ++ (prefix)
+    ++num1;
+
+    // Utilizarea operatorului ++ (postfix)
+    RealNumber result1 = num2++;
+
+    std::cout << "num1 = " << num1.getValue() << std::endl;
+    std::cout << "num2 = " << num2.getValue() << std::endl;
+    std::cout << "result1 = " << result1.getValue() << std::endl;
+
+    // Utilizarea operatorului + între RealNumber
+    RealNumber sum = num1 + num2;
+    std::cout << "Sum = " << sum.getValue() << std::endl;
+
+    // Utilizarea operatorului - între RealNumber și double
+    RealNumber difference = num1 - 2.5;
+    std::cout << "Difference = " << difference.getValue() << std::endl;
+
+    // Utilizarea operatorului - între double și RealNumber
+    RealNumber difference2 = 2.5 - num1;
+    std::cout << "Difference2 = " << difference2.getValue() << std::endl;
+
+    // Utilizarea operatorului -- (prefix)
+    --num1;
+    std::cout << "num1 = " << num1.getValue() << std::endl;
+
+    // Utilizarea operatorului -- (postfix)
+    RealNumber result2 = num1--;
+    std::cout << "num1 = " << num1.getValue() << std::endl;
+    std::cout << "result2 = " << result2.getValue() << std::endl;
+
+    // Utilizarea operatorului + între double și RealNumber
+    RealNumber sum2 = 2.0 + num1;
+    std::cout << "Sum2 = " << sum2.getValue() << std::endl;
+
+    return 0;
+}
+
+Problema 2:
+
+#include <iostream>
+#include <cmath>
+
+class Vector {
+private:
+    double* data;
+    int size;
+
+public:
+    // Constructor care inițializează vectorul cu dimensiunea dată și toate elementele cu valoarea dată
+    Vector(int size, double value = 0.0) : size(size) {
+        data = new double[size];
+        for (int i = 0; i < size; i++) {
+            data[i] = value;
+        }
+    }
+
+    // Constructor de copiere
+    Vector(const Vector& other) : size(other.size) {
+        data = new double[size];
+        for (int i = 0; i < size; i++) {
+            data[i] = other.data[i];
+        }
+    }
+
+    // Destructor
+    ~Vector() {
+        delete[] data;
+    }
+
+    // Suprascrierea operatorului de atribuire "="
+    Vector& operator=(const Vector& other) {
+        if (this != &other) {
+            if (size != other.size) {
+                delete[] data;
+                size = other.size;
+                data = new double[size];
+            }
+            for (int i = 0; i < size; i++) {
+                data[i] = other.data[i];
+            }
+        }
+        return *this;
+    }
+
+    // Suprascrierea operatorului de adunare "+"
+    Vector operator+(const Vector& other) const {
+        if (size != other.size) {
+            throw std::runtime_error("Dimensiuni diferite ale vectorilor.");
+        }
+        Vector result(size);
+        for (int i = 0; i < size; i++) {
+            result.data[i] = data[i] + other.data[i];
+        }
+        return result;
+    }
+
+    // Suprascrierea operatorului de scădere "-"
+    Vector operator-(const Vector& other) const {
+        if (size != other.size) {
+            throw std::runtime_error("Dimensiuni diferite ale vectorilor.");
+        }
+        Vector result(size);
+        for (int i = 0; i < size; i++) {
+            result.data[i] = data[i] - other.data[i];
+        }
+        return result;
+    }
+
+    // Suprascrierea operatorului "==" ca funcție prietenă
+    friend bool operator==(const Vector& vec1, const Vector& vec2) {
+        if (vec1.size != vec2.size) {
+            return false;
+        }
+        for (int i = 0; i < vec1.size; i++) {
+            if (vec1.data[i] != vec2.data[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Suprascrierea operatorului "!=" ca funcție prietenă
+    friend bool operator!=(const Vector& vec1, const Vector& vec2) {
+        return !(vec1 == vec2);
+    }
+
+    // Suprascrierea operatorului "<" ca funcție prietenă
+    friend bool operator<(const Vector& vec1, const Vector& vec2) {
+        if (vec1.size != vec2.size) {
+            throw std::runtime_error("Dimensiuni diferite ale vectorilor.");
+        }
+        for (int i = 0; i < vec1.size; i++) {
+            if (vec1.data[i] >= vec2.data[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Suprascrierea operatorului ">" ca funcție prietenă
+    friend bool operator>(const Vector& vec1, const Vector& vec2) {
+        return vec2 < vec1;
+    }
+
+    // Suprascrierea operatorului "<<" pentru afișare
+    friend std::ostream& operator<<(std::ostream& os, const Vector& vec) {
+        os << "(";
+        for (int i = 0; i < vec.size; i++) {
+            os << vec.data[i];
+            if (i < vec.size - 1) {
+                os << ", ";
+            }
+        }
+        os << ")";
+        return os;
+    }
+
+    // Suprascrierea operatorului ">>" pentru citire
+    friend std::istream& operator>>(std::istream& is, Vector& vec) {
+        for (int i = 0; i < vec.size; i++) {
+            is >> vec.data[i];
+        }
+        return is;
+    }
+};
+
+int main() {
+    int size;
+    std::cout << "Introduceți dimensiunea vectorilor: ";
+    std::cin >> size;
+
+    Vector v1(size);
+    Vector v2(size);
+
+    std::cout << "Introduceți elementele primului vector: ";
+    std::cin >> v1;
+
+    std::cout << "Introduceți elementele celui de-al doilea vector: ";
+    std::cin >> v2;
+
+    Vector v3 = v1 + v2;
+    Vector v4 = v1 - v2;
+
+    std::cout << "v1: " << v1 << std::endl;
+    std::cout << "v2: " << v2 << std::endl;
+    std::cout << "v1 + v2: " << v3 << std::endl;
+    std::cout << "v1 - v2: " << v4 << std::endl;
+
+    if (v1 == v2) {
+        std::cout << "v1 este egal cu v2" << std::endl;
+    } else {
+        std::cout << "v1 nu este egal cu v2" << std::endl;
+    }
+
+    if (v1 != v2) {
+        std::cout << "v1 este diferit de v2" << std::endl;
+    }
+
+    if (v1 < v2) {
+        std::cout << "v1 este mai mic decat v2" << std::endl;
+    }
+
+    if (v1 > v2) {
+        std::cout << "v1 este mai mare decat v2" << std::endl;
+    }
+
+    return 0;
+}
