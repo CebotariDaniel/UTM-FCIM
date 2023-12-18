@@ -1,0 +1,161 @@
+1.#include <iostream>
+
+// Clasa de bază BarcaCuMotor
+class BarcaCuMotor {
+public:
+    BarcaCuMotor() {
+        std::cout << "Constructor BarcaCuMotor" << std::endl;
+    }
+
+    ~BarcaCuMotor() {
+        std::cout << "Destructor BarcaCuMotor" << std::endl;
+    }
+
+    void pornesteMotor() {
+        std::cout << "Motorul barcii a fost pornit" << std::endl;
+    }
+
+    void opresteMotor() {
+        std::cout << "Motorul barcii a fost oprit" << std::endl;
+    }
+};
+
+// Clasa de bază Motocicleta
+class Motocicleta {
+public:
+    Motocicleta() {
+        std::cout << "Constructor Motocicleta" << std::endl;
+    }
+
+    ~Motocicleta() {
+        std::cout << "Destructor Motocicleta" << std::endl;
+    }
+
+    void pornesteMotor() {
+        std::cout << "Motorul motocicletei a fost pornit" << std::endl;
+    }
+
+    void opresteMotor() {
+        std::cout << "Motorul motocicletei a fost oprit" << std::endl;
+    }
+};
+
+// Clasa derivată MotocicletaDeApa (moștenire multiplă)
+class MotocicletaDeApa : public BarcaCuMotor, public Motocicleta {
+public:
+    MotocicletaDeApa() {
+        std::cout << "Constructor MotocicletaDeApa" << std::endl;
+    }
+
+    ~MotocicletaDeApa() {
+        std::cout << "Destructor MotocicletaDeApa" << std::endl;
+    }
+
+    // Dacă există metode cu același nume în clasele de bază, poți specifica din care clasă vrei să o folosești:
+    void pornesteMotorBarca() {
+        BarcaCuMotor::pornesteMotor();
+    }
+
+    void opresteMotorBarca() {
+        BarcaCuMotor::opresteMotor();
+    }
+
+    void pornesteMotorMotocicleta() {
+        Motocicleta::pornesteMotor();
+    }
+
+    void opresteMotorMotocicleta() {
+        Motocicleta::opresteMotor();
+    }
+};
+
+int main() {
+    // Crearea unei instanțe a clasei derivate MotocicletaDeApa
+    MotocicletaDeApa motocicletaDeApa;
+
+    // Utilizarea metodelor clasei derivate
+    motocicletaDeApa.pornesteMotorBarca();
+    motocicletaDeApa.opresteMotorBarca();
+    motocicletaDeApa.pornesteMotorMotocicleta();
+    motocicletaDeApa.opresteMotorMotocicleta();
+
+    return 0;
+}
+
+2.#include <iostream>
+
+// Clasa de bază Transport
+class Transport {
+public:
+Transport() {
+std::cout << "Constructor Transport" << std::endl;
+}
+
+virtual ~Transport() {
+std::cout << "Destructor Transport" << std::endl;
+}
+
+virtual void deplasare() const {
+std::cout << "Se deplaseaza ca un transport generic." << std::endl;
+}
+};
+
+// Clasa derivată BarcaCuMotor
+class BarcaCuMotor : virtual public Transport {
+public:
+BarcaCuMotor() {
+std::cout << "Constructor BarcaCuMotor" << std::endl;
+}
+
+~BarcaCuMotor() override {
+std::cout << "Destructor BarcaCuMotor" << std::endl;
+}
+
+void deplasare() const override {
+std::cout << "Barca cu motor se deplaseaza pe apa." << std::endl;
+}
+};
+
+// Clasa derivată Motocicleta
+class Motocicleta : virtual public Transport {
+public:
+Motocicleta() {
+std::cout << "Constructor Motocicleta" << std::endl;
+}
+
+~Motocicleta() override {
+std::cout << "Destructor Motocicleta" << std::endl;
+}
+
+void deplasare() const override {
+std::cout << "Motocicleta se deplaseaza pe uscat." << std::endl;
+}
+};
+
+// Clasa derivată MotocicletaDeApa (moștenire multiplă, rezolvare problema diamantului)
+class MotocicletaDeApa : public BarcaCuMotor, public Motocicleta {
+public:
+MotocicletaDeApa() {
+std::cout << "Constructor MotocicletaDeApa" << std::endl;
+}
+
+~MotocicletaDeApa() override {
+std::cout << "Destructor MotocicletaDeApa" << std::endl;
+}
+
+// Suprascrie metoda deplasare pentru a rezolva ambiguitatea
+void deplasare() const override {
+// Specifică din ce clasă de bază apelezi metoda
+BarcaCuMotor::deplasare();
+}
+};
+
+int main() {
+// Crearea unei instanțe a clasei derivate MotocicletaDeApa
+MotocicletaDeApa motocicletaDeApa;
+
+// Utilizarea metodei suprascrise pentru a evita problema diamantului
+motocicletaDeApa.deplasare();
+
+return 0;
+}
