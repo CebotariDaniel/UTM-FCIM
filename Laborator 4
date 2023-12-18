@@ -1,0 +1,158 @@
+1.#include <iostream>
+#include <cstring>
+
+class Lichid {
+protected:
+    char* denumire;
+    float densitate;
+
+public:
+    // Constructor implicit
+    Lichid() : denumire(nullptr), densitate(0.0) {}
+
+    // Constructor cu parametri
+    Lichid(const char* nume, float dens) : densitate(dens) {
+        denumire = new char[strlen(nume) + 1];
+        strcpy_s(denumire, strlen(nume) + 1, nume);
+    }
+
+    ~Lichid() {
+        delete[] denumire;
+    }
+
+    // Operatorul fluxului de intrare
+    friend std::istream& operator>>(std::istream& is, Lichid& lichid) {
+        char buffer[100];
+        std::cout << "Denumire: ";
+        is >> buffer;
+        lichid.denumire = new char[strlen(buffer) + 1];
+        strcpy_s(lichid.denumire, strlen(buffer) + 1, buffer);
+        std::cout << "Densitate: ";
+        is >> lichid.densitate;
+        return is;
+    }
+};
+
+class BauturiAlcoolice : public Lichid {
+private:
+    float tarie;
+
+public:
+    // Constructor implicit
+    BauturiAlcoolice() : Lichid(), tarie(0.0) {}
+
+    // Constructor cu parametri
+    BauturiAlcoolice(const char* nume, float dens, float alcool) : Lichid(nume, dens), tarie(alcool) {}
+
+    // Funcție pentru redenumirea densității
+    void redenumesteDensitate(float nouaDensitate) {
+        densitate = nouaDensitate;
+    }
+
+    // Funcție pentru redenumirea tăriei
+    void redenumesteTaria(float nouaTarie) {
+        tarie = nouaTarie;
+    }
+
+    // Operatorul fluxului de intrare
+    friend std::istream& operator>>(std::istream& is, BauturiAlcoolice& bautura) {
+        // Utilizează operatorul fluxului de intrare al clasei de bază
+        is >> static_cast<Lichid&>(bautura);
+        std::cout << "Tara: ";
+        is >> bautura.tarie;
+        return is;
+    }
+};
+
+int main() {
+    BauturiAlcoolice whiskey;
+    std::cin >> whiskey;
+
+    // Testarea funcțiilor de redenumire
+    whiskey.redenumesteDensitate(0.95);
+    whiskey.redenumesteTaria(40);
+
+    return 0;
+}
+
+
+
+2.#include <iostream>
+#include <string>
+
+class Buton {
+private:
+    std::string text;
+
+public:
+    // Constructor cu parametru
+    Buton(const std::string& buttonText) : text(buttonText) {}
+
+    // Metodă de acces pentru text
+    const std::string& getText() const {
+        return text;
+    }
+};
+
+class Fereastra {
+private:
+    Buton buton;
+    int coordonataX;
+    int coordonataY;
+
+public:
+    // Constructor cu parametri
+    Fereastra(const std::string& buttonText, int x, int y)
+        : buton(buttonText), coordonataX(x), coordonataY(y) {}
+
+    // Destructor
+    ~Fereastra() {
+        // Nu este necesar să facem nimic special în destructorul clasei Fereastra
+    }
+
+    // Metode de acces pentru buton și coordonatele ferestrei
+    const Buton& getButon() const {
+        return buton;
+    }
+
+    int getCoorodnataX() const {
+        return coordonataX;
+    }
+
+    int getCoorodnataY() const {
+        return coordonataY;
+    }
+};
+
+class FereastraCuButonSiMesaj : public Fereastra {
+private:
+    std::string mesaj;
+
+public:
+    // Constructor cu parametri
+    FereastraCuButonSiMesaj(const std::string& buttonText, int x, int y, const std::string& message)
+        : Fereastra(buttonText, x, y), mesaj(message) {}
+
+    // Destructor
+    ~FereastraCuButonSiMesaj() {
+        // Nu este necesar să facem nimic special în destructorul clasei FereastraCuButonSiMesaj
+    }
+
+    // Operatorul fluxului de ieșire
+    friend std::ostream& operator<<(std::ostream& os, const FereastraCuButonSiMesaj& fereastra) {
+        os << "Fereastra cu Buton și Mesaj:\n";
+        os << "  Coordonate fereastra: (" << fereastra.getCoorodnataX() << ", " << fereastra.getCoorodnataY() << ")\n";
+        os << "  Text buton: " << fereastra.getButon().getText() << "\n";
+        os << "  Mesaj: " << fereastra.mesaj << "\n";
+        return os;
+    }
+};
+
+int main() {
+    // Exemplu de utilizare
+    FereastraCuButonSiMesaj fereastra1("Apasa-ma", 100, 50, "Buna, lume!");
+    std::cout << fereastra1;
+
+    return 0;
+}
+
