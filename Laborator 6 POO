@@ -1,0 +1,67 @@
+#include <iostream>
+#include <cmath>
+
+// Clasa abstractă de bază
+class Lines {
+public:
+    virtual double f(double x) const = 0;  // Funcția virtuală pură
+    virtual ~Lines() {}
+};
+
+// Clasa derivată pentru dreapta
+class StraightLine : public Lines {
+private:
+    double a, b;  // Coeficienții dreptei: y = ax + b
+
+public:
+    StraightLine(double a, double b) : a(a), b(b) {}
+
+    double f(double x) const override {
+        return a * x + b;
+    }
+};
+
+// Clasa derivată pentru elipsă
+class Ellipse : public Lines {
+private:
+    double a, b;  // Coeficienții elipsei: x^2/a^2 - y^2/b^2 = 1
+
+public:
+    Ellipse(double a, double b) : a(a), b(b) {}
+
+    double f(double x) const override {
+        return b * sqrt(1 - (x * x) / (a * a));
+    }
+};
+
+// Clasa derivată pentru hiperbolă
+class Hyperbola : public Lines {
+private:
+    double a, b;  // Coeficienții hiperbolei: x^2/a^2 - y^2/b^2 = 1
+
+public:
+    Hyperbola(double a, double b) : a(a), b(b) {}
+
+    double f(double x) const override {
+        return b * sqrt(1 + (x * x) / (a * a));
+    }
+};
+
+int main() {
+    const int n = 3;  // Numărul de obiecte
+
+    // Crearea obiectelor
+    StraightLine line(2.0, 3.0);
+    Ellipse ellipse(5.0, 4.0);
+    Hyperbola hyperbola(3.0, 2.0);
+
+    // Vector de pointeri la clasa abstractă
+    Lines* linesArray[n] = {&line, &ellipse, &hyperbola};
+
+    // Utilizarea obiectelor și a funcției virtuale
+    for (int i = 0; i < n; ++i) {
+        std::cout << "Valoarea pentru x=2.0 pe obiectul " << i + 1 << ": " << linesArray[i]->f(2.0) << std::endl;
+    }
+
+    return 0;
+}
